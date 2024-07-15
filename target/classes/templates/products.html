@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Products</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            background-color: rgba(64, 86, 75, 0.58);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #f8f9fa;
+            font-size: 14px;
+        }
+
+        .container {
+            background: #3a3f44;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            color: #f8f9fa;
+            font-size: 24px;
+        }
+
+        form {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        form input[type="text"] {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            margin-right: 10px;
+            background-color: #495057;
+            color: #f8f9fa;
+        }
+
+        form button {
+            padding: 8px 16px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: #f8f9fa;
+        }
+
+        table, th, td {
+            border: 1px solid #495057;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #495057;
+        }
+
+        tr:nth-child(even) {
+            background-color: #3a3f44;
+        }
+
+        tr:hover {
+            background-color: #495057;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-warning {
+            background-color: #ffc107;
+            color: black;
+        }
+
+        .btn-warning:hover {
+            background-color: #e0a800;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            margin-top: 20px;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            color: #007bff;
+            margin: 0 5px;
+            padding: 8px 12px;
+            text-decoration: none;
+            border: 1px solid #495057;
+            border-radius: 5px;
+        }
+
+        .pagination a:hover {
+            background-color: #495057;
+        }
+
+        .pagination span {
+            padding: 8px 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Products</h1>
+
+    <form th:action="@{/products}" method="get">
+        <input type="text" name="keyword" placeholder="Search by name" th:value="${keyword}">
+        <button type="submit">Search</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th><a th:href="@{/products(page=${currentPage}, sortField='name', sortDir=${reverseSortDir}, keyword=${keyword})}">Name</a></th>
+            <th><a th:href="@{/products(page=${currentPage}, sortField='price', sortDir=${reverseSortDir}, keyword=${keyword})}">Price</a></th>
+            <th><a th:href="@{/products(page=${currentPage}, sortField='quantity', sortDir=${reverseSortDir}, keyword=${keyword})}">Quantity</a></th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="product : ${products}">
+            <td th:text="${product.id}" style="display: none;"></td>
+            <td th:text="${product.name}"></td>
+            <td th:text="${product.price}"></td>
+            <td th:text="${product.quantity}"></td>
+            <td th:if="${product.category != null}" th:text="${product.category.name}"></td>
+            <td th:if="${product.category == null}">No Category</td>
+            <td>
+                <a th:href="@{/products/update/{id}(id=${product.id})}" class="btn btn-warning">Edit</a>
+                <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="pagination">
+        <span th:if="${currentPage > 0}">
+            <a th:href="@{/products(page=${currentPage - 1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}" class="btn btn-secondary">Previous</a>
+        </span>
+        <span>Page <span th:text="${currentPage + 1}"></span> of <span th:text="${totalPages}"></span></span>
+        <span th:if="${currentPage < totalPages - 1}">
+            <a th:href="@{/products(page=${currentPage + 1}, sortField=${sortField}, sortDir=${sortDir}, keyword=${keyword})}" class="btn btn-secondary">Next</a>
+        </span>
+    </div>
+
+    <a href="/products/add" class="btn btn-success">Add Product</a>
+</div>
+</body>
+</html>
